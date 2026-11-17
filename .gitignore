@@ -1,0 +1,26 @@
+# Arquivos locais e de ETL - nao publicar
+*.pbix
+*.pbit
+*.ipynb
+*.parquet
+*.csv
+*.tsv
+*.xlsx
+*.xls
+*.duckdb
+*.db
+*.sqlite
+*.zip
+*.7z
+*.rar
+*.env
+.env.*
+__pycache__/
+.ipynb_checkpoints/
+data/
+notebooks/
+etl/
+secrets/
+credentials/
+*.key
+*.pem

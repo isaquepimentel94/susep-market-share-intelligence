@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f4f6f8">
+<meta name="description" content="SUSEP Market Share Intelligence: portfólio de Power BI sobre concorrência no mercado de seguros brasileiro.">
+<title>SUSEP | Market Share Intelligence</title>
+<style>
+:root{--ink:#1c2836;--muted:#647387;--blue:#3496d7;--line:#dee5ec;--bg:#f5f7fa;--white:#fff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}a{color:#146bab}a:hover{text-decoration:none}.wrap{width:min(1140px,calc(100% - 40px));margin:0 auto}header{background:var(--white);border-bottom:1px solid var(--line)}nav{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:24px}.brand{font-weight:750;font-size:1.18rem;letter-spacing:-.02em}.brand span{color:var(--blue)}nav a{font-size:.93rem;font-weight:600}.hero{padding:78px 0 62px}.eyebrow{font-size:.78rem;text-transform:uppercase;letter-spacing:.14em;font-weight:750;color:#267bb7;margin:0 0 16px}h1{font-size:clamp(2.3rem,5vw,4rem);line-height:1.08;letter-spacing:-.05em;margin:0 0 24px;max-width:900px}.lead{font-size:clamp(1.03rem,2vw,1.21rem);color:var(--muted);max-width:850px;margin:0 0 28px}.pills{display:flex;flex-wrap:wrap;gap:10px}.pill{border:1px solid #cddce8;color:#356486;border-radius:50px;background:#e9f2f9;font-size:.83rem;padding:6px 12px}.section{padding:28px 0 60px}h2{font-size:clamp(1.55rem,2.6vw,2rem);letter-spacing:-.035em;line-height:1.25;margin:0 0 13px}.intro{color:var(--muted);margin:0 0 27px;max-width:850px}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.card{background:var(--white);border:1px solid var(--line);border-radius:13px;padding:26px 23px;box-shadow:0 8px 25px #142e4408}.n{font-size:.8rem;font-weight:750;color:#4d9bcf;letter-spacing:.08em}.card h3{font-size:1.15rem;letter-spacing:-.02em;margin:12px 0}.card p{color:var(--muted);font-size:.94rem;margin:0}.method{background:var(--white);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.method .grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}.method p{color:var(--muted)}.note{border-left:4px solid var(--blue);padding:10px 18px;background:#f0f7fc;font-size:.93rem}.gallery{display:none}.shots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.shot{margin:0;background:white;border:1px solid var(--line);border-radius:13px;overflow:hidden;box-shadow:0 8px 25px #142e4408}.shot img{width:100%;height:auto;display:block;background:#f7f7f7}.shot figcaption{border-top:1px solid var(--line);padding:12px 16px;font-size:.9rem;font-weight:600}.footer{padding:32px 0;border-top:1px solid var(--line);font-size:.87rem;color:var(--muted)}.footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
+@media(max-width:800px){.cards{grid-template-columns:1fr}.method .grid{grid-template-columns:1fr;gap:14px}.shots{grid-template-columns:1fr}.hero{padding:49px 0 43px}.section{padding:24px 0 48px}}
+</style>
+</head>
+<body>
+<header><nav class="wrap"><div class="brand">SUSEP <span>| Market Share Intelligence</span></div><a href="https://github.com/isaquepimentel94/susep-market-share-intelligence">Ver no GitHub</a></nav></header>
+<main>
+<section class="hero wrap">
+  <p class="eyebrow">Projeto de Business Intelligence · Portfólio</p>
+  <h1>Inteligência competitiva no mercado segurador brasileiro</h1>
+  <p class="lead">Uma visão analítica do posicionamento das seguradoras, da participação de mercado e do desempenho técnico, considerando a carteira de produtos efetivamente comparável.</p>
+  <div class="pills"><span class="pill">Power BI</span><span class="pill">DAX</span><span class="pill">Dados públicos SUSEP</span><span class="pill">Atualizado até set/2026</span></div>
+</section>
+<section class="section wrap" id="visoes"><h2>Visões do painel</h2><p class="intro">O relatório foi estruturado para apoiar a leitura do posicionamento competitivo e de suas diferenças técnicas e regionais.</p>
+  <div class="cards">
+    <article class="card"><span class="n">01 / POSICIONAMENTO</span><h3>Raio-X Competitivo</h3><p>Market Share, ranking, distância para concorrentes, prêmios diretos, sinistralidade, margem técnica parcial e evolução temporal.</p></article>
+    <article class="card"><span class="n">02 / TERRITÓRIO</span><h3>Competitividade Regional</h3><p>Participação por UF, presença territorial, liderança, posições competitivas e evolução da participação nos mercados estaduais.</p></article>
+    <article class="card"><span class="n">03 / TRANSPARÊNCIA</span><h3>Guia de Indicadores</h3><p>Definições, fórmulas conceituais, interpretações, fontes e critérios utilizados nas análises.</p></article>
+  </div>
+</section>
+<section class="section method"><div class="wrap grid"><div><p class="eyebrow">Método</p><h2>Comparação por carteira equivalente</h2><p>A participação de mercado é examinada no contexto dos ramos comercializados pela seguradora selecionada. Isso evita comparar indiscriminadamente produtos que não fazem parte de seu universo competitivo.</p></div><div class="note"><strong>Como interpretar:</strong> uma concorrente que comercializa diferentes produtos entra na análise apenas com os prêmios relativos aos ramos da carteira de referência. Os indicadores técnicos e estaduais respeitam suas respectivas fontes e granularidades.</div></div></section>
+<section class="section wrap gallery" id="galeria" aria-label="Capturas do painel"><h2>Capturas do dashboard</h2><p class="intro">Imagens reais das páginas do Power BI, com dados até setembro de 2026.</p><div class="shots" id="shots"></div></section>
+<section class="section wrap"><h2>Sobre esta publicação</h2><p class="intro">Esta página é uma apresentação estática do trabalho desenvolvido em Power BI. O relatório original, os notebooks de ETL e as bases intermediárias não são distribuídos neste repositório.</p><p><a href="https://github.com/isaquepimentel94/susep-market-share-intelligence#readme">Ler metodologia e documentação no GitHub</a></p></section>
+</main>
+<footer class="footer"><div class="wrap"><span>Fonte: SUSEP · Referência: setembro de 2026</span><span>Projeto independente de portfólio; não é publicação oficial da SUSEP.</span></div></footer>
+<script>
+// As capturas aparecem somente se os arquivos estiverem disponíveis em assets/.
+const imagens = [
+  ['raio-x-market-share.png','Raio-X — Market Share'],
+  ['raio-x-sinistralidade.png','Raio-X — Sinistralidade'],
+  ['raio-x-margem.png','Raio-X — Margem Técnica Parcial'],
+  ['competitividade-uf.png','Competitividade por UF'],
+  ['guia-indicadores.png','Guia de Indicadores']
+];
+const shots = document.getElementById('shots');
+const sec = document.getElementById('galeria');
+for (const [filename, label] of imagens) {
+  const fig = document.createElement('figure'); fig.className = 'shot';
+  const img = document.createElement('img'); img.src = 'assets/' + filename; img.alt = label; img.loading='lazy';
+  const cap = document.createElement('figcaption'); cap.textContent = label;
+  img.onload = () => {fig.append(img,cap); shots.append(fig);sec.style.display='block';};
+}
+</script>
+</body></html>
