@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: susep-market-share
+    runtime: python
+    plan: free
+    region: virginia
+    autoDeployTrigger: "off"
+    buildCommand: bash deploy/build.sh
+    startCommand: bash deploy/start.sh
+    healthCheckPath: /healthz
+    envVars:
+      - key: SUSEP_HOST
+        value: "0.0.0.0"
+      - key: SUSEP_DATA_DIR
+        value: data/curated
+      - key: SUSEP_DUCKDB_MEMORY_LIMIT
+        value: "192 MiB"
+      - key: SUSEP_DUCKDB_THREADS
+        value: "1"
+      - key: SUSEP_QUERY_SLOTS
+        value: "1"
+      - key: SUSEP_DUCKDB_TEMP_DIR
+        value: /tmp/susep-duckdb
+      - key: SUSEP_PARQUETS_ARTIFACT_URL
+        sync: false

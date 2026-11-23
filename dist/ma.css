@@ -1,0 +1,52 @@
+.ma-controls,
+.ma-layout {
+  display: grid;
+  grid-template-columns: minmax(0, .8fr) minmax(0, 1fr);
+  column-gap: clamp(14px, 2vw, 30px);
+}
+
+.ma-controls { align-items: end; margin-block: 11px 18px; }
+.ma-company-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.ma-company-controls select { text-overflow: ellipsis; }
+.ma-layout { align-items: stretch; row-gap: 12px; }
+.ma-card-groups { display: grid; align-content: space-between; gap: 12px; min-width: 0; }
+.ma-card-group h2 { font-size: clamp(.95rem, 1.4vw, 1.125rem); font-weight: 680; }
+.ma-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 4px 4px 7px;
+}
+.ma-cards .card dt { min-height: 1.85em; }
+.ma-branches { grid-column: 1 / -1; }
+.ma-uf .table-scroll { max-height: clamp(215px, 33vh, 330px); }
+.ma-branches .table-scroll { max-height: clamp(170px, 28vh, 250px); }
+.ma-branches table { min-width: 900px; }
+.ma-uf table { min-width: 460px; }
+.ma-layout table th, .ma-layout table td { padding: 5px 6px; }
+.ma-layout thead button { white-space: normal; text-align: inherit; }
+.ma-layout tbody th { background: #fff; font-weight: 400; }
+.ma-layout tbody tr:nth-child(even) th { background: #f8f8f8; }
+.ma-layout tbody tr:hover th { background: #edf5fc; }
+.ma-layout tbody tr[data-selected] th { background: #e4eff8; }
+.ma-layout tbody [data-ma-row] { min-height: 22px; }
+.ma-layout tbody tr:has([data-ma-row]) { cursor: pointer; }
+.ma-layout tfoot { z-index: 1; }
+
+@media (max-width: 900px) {
+  .ma-controls, .ma-layout { grid-template-columns: minmax(0, 1fr); row-gap: 12px; }
+  .ma-controls .reference { order: 1; }
+  .ma-company-controls { max-width: 640px; }
+  .ma-uf .table-scroll { max-height: 260px; }
+}
+
+@media (max-width: 460px) {
+  .ma-company-controls { gap: 10px; }
+  .ma-cards { gap: 5px; padding-inline: 0; }
+  .ma-cards .card dt { min-height: 2.4em; }
+  .ma-cards .card dd { font-size: clamp(.95rem, 4.4vw, 1.2rem); }
+}

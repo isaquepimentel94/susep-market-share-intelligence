@@ -1,0 +1,135 @@
+// Referência de paridade para Caixa Seguradora, jan–set/2026.
+// As medidas abaixo são locais à consulta. Execute sem atualizar o modelo.
+// A posição exclui explicitamente a própria seguradora da contagem estrita.
+// A cadeia da meta usa essa posição de forma explícita em cada dependência.
+DEFINE
+    MEASURE Seletor_Entidade[Posição atual validada] =
+        VAR Entidade = SELECTEDVALUE(Seletor_Entidade[coenti])
+        VAR RamosReferencia =
+            FILTER(
+                ALL(dim_ramo[ramo]),
+                VAR Premio = CALCULATE([Prêmios Referência], REMOVEFILTERS(dim_uf))
+                RETURN NOT ISBLANK(Premio) && ABS(Premio) > 0.01
+            )
+        VAR Ranking =
+            ADDCOLUMNS(
+                ALL(dim_seguradora[coenti]),
+                "@Premio",
+                    CALCULATE(
+                        [Prêmios Diretos],
+                        REMOVEFILTERS(dim_ramo),
+                        TREATAS(RamosReferencia, dim_ramo[ramo])
+                    )
+            )
+        VAR PremioEntidade =
+            CALCULATE(
+                [Prêmios Diretos],
+                REMOVEFILTERS(dim_seguradora),
+                REMOVEFILTERS(dim_ramo),
+                TREATAS({Entidade}, dim_seguradora[coenti]),
+                TREATAS(RamosReferencia, dim_ramo[ramo])
+            )
+        RETURN
+            IF(
+                ISBLANK(Entidade)
+                    || COUNTROWS(VALUES(Seletor_Entidade[coenti])) <> 1
+                    || PremioEntidade <= 0,
+                BLANK(),
+                1 + COUNTROWS(
+                    FILTER(Ranking, dim_seguradora[coenti] <> Entidade && [@Premio] > PremioEntidade)
+                )
+            )
+    MEASURE 'Crescimento Concorrentes'[Posição-alvo validada] =
+        VAR PosicaoAtual = [Posição atual validada]
+        VAR Movimento = SELECTEDVALUE(Meta_Movimento[Movimento], 0)
+        VAR PosicaoAlvo = PosicaoAtual - Movimento
+        VAR TotalConcorrentes = [Qtd Seguradoras Concorrentes]
+        RETURN
+            IF(
+                Movimento = 0 || ISBLANK(PosicaoAtual)
+                    || PosicaoAlvo < 1 || PosicaoAlvo > TotalConcorrentes,
+                BLANK(),
+                PosicaoAlvo
+            )
+    MEASURE 'Crescimento Concorrentes'[Prêmio limite validado] =
+        VAR EntidadeRef = SELECTEDVALUE(Seletor_Entidade[coenti])
+        VAR Movimento = SELECTEDVALUE(Meta_Movimento[Movimento])
+        VAR PosicaoAlvo = [Posição-alvo validada]
+        VAR PremioReferencia = [Prêmios Referência]
+        VAR CrescimentoConcorrentes =
+            DIVIDE(SELECTEDVALUE('Crescimento Concorrentes'[Crescimento Concorrentes], 0), 100)
+        VAR BaseConcorrentes =
+            ADDCOLUMNS(
+                ALL(dim_seguradora[coenti]),
+                "@Premio",
+                    VAR Codigo = dim_seguradora[coenti]
+                    RETURN
+                        CALCULATE(
+                            [Prêmios Concorrente na Carteira],
+                            REMOVEFILTERS(dim_seguradora),
+                            REMOVEFILTERS(dim_grupo_segurador),
+                            TREATAS({Codigo}, dim_seguradora[coenti])
+                        )
+            )
+        VAR Concorrentes =
+            ADDCOLUMNS(
+                FILTER(BaseConcorrentes, dim_seguradora[coenti] <> EntidadeRef && [@Premio] > 0),
+                "@Simulado", [@Premio] * (1 + CrescimentoConcorrentes)
+            )
+        VAR OrdemLimite = IF(Movimento > 0, PosicaoAlvo, PosicaoAlvo - 1)
+        VAR ConcorrentesLimite =
+            TOPN(OrdemLimite, Concorrentes, [@Simulado], DESC, dim_seguradora[coenti], ASC)
+        VAR PremioCorte = MINX(ConcorrentesLimite, [@Simulado])
+        RETURN
+            IF(
+                ISBLANK(EntidadeRef) || ISBLANK(Movimento) || ISBLANK(PosicaoAlvo)
+                    || PremioReferencia <= 0 || OrdemLimite < 1
+                    || COUNTROWS(Concorrentes) < OrdemLimite || ISBLANK(PremioCorte) || Movimento = 0,
+                BLANK(),
+                IF(Movimento > 0, ROUND(PremioCorte, 2) + 0.01, MAX(0, ROUND(PremioCorte, 2) - 0.01))
+            )
+    MEASURE 'Crescimento Concorrentes'[Margem de segurança validada] =
+        VAR Movimento = SELECTEDVALUE(Meta_Movimento[Movimento])
+        VAR PremioLimite = [Prêmio limite validado]
+        VAR PremioSimulado = [Prêmios Simulados Referência]
+        RETURN
+            IF(
+                Movimento >= 0 || ISBLANK(PremioLimite) || ISBLANK(PremioSimulado),
+                BLANK(),
+                MAX(0, PremioSimulado - PremioLimite)
+            )
+    VAR MesFinal = TREATAS({"set/2026"}, Filtro_Mes_Final[Mês/Ano])
+    VAR Referencia = TREATAS({"CAIXA SEGURADORA S/A"}, Seletor_Entidade[Seguradora])
+    VAR Meta = TREATAS({"Cair 3 posições"}, Meta_Movimento[Objetivo])
+    VAR MesInicial = TREATAS({"jan/2026"}, Filtro_Mes_Inicial[Mês/Ano])
+    VAR CrescimentoReferencia =
+        FILTER(
+            KEEPFILTERS(VALUES('Crescimento Referência'[Crescimento Referência])),
+            'Crescimento Referência'[Crescimento Referência] = 18
+        )
+    VAR CrescimentoConcorrentes =
+        FILTER(
+            KEEPFILTERS(VALUES('Crescimento Concorrentes'[Crescimento Concorrentes])),
+            'Crescimento Concorrentes'[Crescimento Concorrentes] = 0
+        )
+
+// Cartões de posição e participação, que recebem os dois sliders.
+EVALUATE
+    SUMMARIZECOLUMNS(
+        MesFinal, Referencia, CrescimentoConcorrentes, Meta, MesInicial, CrescimentoReferencia,
+        "Posição atual", [Posição atual validada],
+        "Posição simulada", [Posição Simulada],
+        "MS atual (%)", FORMAT([Market Share da Referência] * 100, "0.0000000000", "en-US"),
+        "MS simulado (%)", FORMAT([Market Share Simulado %] * 100, "0.0000000000", "en-US"),
+        "Impacto (p.p.)", FORMAT([Impacto Simulado MS p.p.], "0.0000000000", "en-US")
+    )
+
+// Cartão de meta, com as duas interações NoFilter do PBIR.
+EVALUATE
+    SUMMARIZECOLUMNS(
+        MesFinal, Referencia, Meta, MesInicial,
+        "Posição atual", [Posição atual validada],
+        "Posição-alvo", [Posição-alvo validada],
+        "Limite (R$)", FORMAT([Prêmio limite validado], "0.00", "en-US"),
+        "Margem (R$)", FORMAT([Margem de segurança validada], "0.00", "en-US")
+    )

@@ -1,0 +1,16 @@
+EVALUATE
+CALCULATETABLE(
+FILTER(
+    SUMMARIZECOLUMNS(dim_seguradora[seguradora],
+      "Exibir", [Exibir no Ranking],
+      "Margem", [Indicador Ranking Competitivo],
+      "Premios", [Prêmios Concorrente na Carteira]),
+    [Exibir] = 1 && NOT ISBLANK([Margem])
+),
+TREATAS({"05631"},Seletor_Entidade[coenti]),
+TREATAS({"00230"},Seletor_Grupo[cogrupo]),
+TREATAS({"Margem parcial"},Seletor_Metrica[Indicador]),
+TREATAS({DATE(2026,1,1)},Filtro_Mes_Inicial[Data]),
+TREATAS({DATE(2026,9,1)},Filtro_Mes_Final[Data])
+)
+ORDER BY [Margem] DESC

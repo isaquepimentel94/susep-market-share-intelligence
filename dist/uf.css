@@ -1,0 +1,126 @@
+.uf-summary {
+  display: grid;
+  grid-template-columns: 1.65fr 3fr;
+  align-items: center;
+  gap: clamp(10px, 2vw, 27px);
+  margin-block: 16px 18px;
+}
+.uf-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(8px, 2vw, 23px);
+  margin: 0;
+}
+.uf-cards .card dt { min-height: auto; }
+.uf-cards .card dd { font-size: clamp(1.02rem, 1.65vw, 1.6rem); font-weight: 550; }
+.uf-visuals {
+  display: grid;
+  grid-template-columns: minmax(0, .39fr) minmax(0, .61fr);
+  grid-template-rows: auto auto;
+  align-items: stretch;
+  gap: 10px;
+}
+.uf-map-panel { grid-row: 1 / span 2; display: flex; flex-direction: column; }
+.uf-rank-action {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: .45rem .75rem;
+  background: #eef6fb;
+  padding: .5rem .65rem;
+  margin-block: .45rem .2rem;
+  font-size: .85rem;
+}
+.uf-rank-action[hidden] { display: none; }
+.uf-rank-action button {
+  padding: .4rem .65rem;
+  border: 1px solid #246fae;
+  border-radius: .2rem;
+  background: #246fae;
+  color: #fff;
+  cursor: pointer;
+}
+.uf-map { flex: 1; display: grid; place-items: center; position: relative; min-width: 0; min-height: 205px; }
+.uf-map-image { display: block; height: auto; width: min(100%, 475px); margin-block: 10px; overflow: visible; }
+.uf-shape {
+  stroke: #557f9d;
+  stroke-width: .5px;
+}
+.uf-shape[role=button] { cursor: pointer; }
+.uf-shape[data-unselected=map] { opacity: .4; }
+.uf-shape[data-unselected=variance] { fill: #d8dce0; }
+.uf-shape:hover, .uf-shape:focus-visible, .uf-shape[aria-pressed=true] {
+  stroke: #143650;
+  stroke-width: 1.55px;
+  filter: brightness(.94);
+  outline: none;
+}
+.uf-shape[aria-disabled=true] { cursor: default; }
+.uf-disputed { fill: #e5ebf0; pointer-events: none; }
+.uf-map-tooltip {
+  position: absolute;
+  z-index: 2;
+  width: max-content;
+  max-width: 100%;
+  padding: .46rem .58rem;
+  border: 1px solid var(--border);
+  background: #fff;
+  box-shadow: 0 1px 5px #0003;
+  color: #333;
+  pointer-events: none;
+  font-size: .77rem;
+  line-height: 1.4;
+}
+.uf-map-tooltip dl {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 12px;
+  margin-top: 4px;
+}
+.uf-map-tooltip dd { text-align: right; white-space: nowrap; }
+.uf-legend { margin: auto auto 0; width: min(100%, 315px); }
+.uf-map-credit {
+  width: min(100%, 315px);
+  margin: 6px auto 0;
+  color: var(--text-secondary);
+  font-size: .73rem;
+  line-height: 1.4;
+}
+.uf-color-strip {
+  height: 8px;
+  background: linear-gradient(to right, #b3d8f2 33.33%, #58a6e5 33.33% 66.67%, #145a9c 66.67%);
+}
+.uf-color-labels { display: flex; justify-content: space-between; gap: 6px; color: var(--text-secondary); font-size: .73rem; margin-top: 4px; }
+.uf-bars { max-height: clamp(185px, 24vw, 255px); min-height: 170px; overflow: auto; scrollbar-width: thin; padding: 8px 3px 2px; }
+.uf-bar-list { gap: 2px; }
+.uf-bar-row { min-height: 19px; padding-block: 1px; grid-template-columns: minmax(100px, 40%) minmax(0, 1fr); }
+.uf-bar-row .rank-company { font-size: .73rem; }
+.uf-bar-row .uf-bar-lane { margin-inline: 44px 68px; min-height: 17px; }
+.uf-bar-row .uf-bar-fill { top: 4px; bottom: 4px; background: #ced8e0; }
+.uf-bar-row[data-reference] .uf-bar-fill { background: #58a6e5; }
+.uf-bar-row .uf-bar-overlay { inset-block: 5px; background: #9fb6c7; }
+.uf-bar-row[data-reference] .uf-bar-overlay { background: #58a6e5; }
+.uf-bar-row.uf-bar-muted { opacity: .35; }
+.uf-bar-row.uf-bar-muted:hover, .uf-bar-row.uf-bar-muted:focus-visible { opacity: .72; }
+.uf-bar-value { font-size: .72rem; }
+#uf-variance .uf-bar-row { grid-template-columns: 34px minmax(0, 1fr); }
+#uf-variance .rank-company { text-align: left; padding-left: 2px; }
+
+@media (max-width: 920px) {
+  .uf-summary { grid-template-columns: 1.15fr 3fr; }
+  .uf-bar-row .uf-bar-lane { margin-inline: 31px 53px; }
+}
+@media (max-width: 760px) {
+  .uf-summary, .uf-visuals { grid-template-columns: 1fr; }
+  .uf-summary { margin-block: 14px; }
+  .uf-map-panel { grid-row: auto; }
+  .uf-map-image { width: min(100%, 380px); }
+  .uf-bars { max-height: 240px; }
+}
+@media (max-width: 460px) {
+  .uf-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 12px; }
+  .uf-cards .card dd { font-size: 1.12rem; }
+  .uf-bar-row { grid-template-columns: minmax(85px, 39%) minmax(0, 1fr); }
+  .uf-bar-row .uf-bar-lane { margin-inline: 25px 46px; }
+}

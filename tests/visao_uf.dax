@@ -1,0 +1,54 @@
+DEFINE
+  VAR Caixa = TREATAS({"05631"}, Seletor_Entidade[coenti])
+  VAR Jan26 = TREATAS({DATE(2026, 1, 1)}, Filtro_Mes_Inicial[Data])
+  VAR Set26 = TREATAS({DATE(2026, 9, 1)}, Filtro_Mes_Final[Data])
+  VAR Piaui = TREATAS({"PI"}, dim_uf[uf])
+
+// 1 — Cartões Caixa e comparação anual do Piauí
+EVALUATE
+CALCULATETABLE(
+  UNION(
+    ROW("Medida", "Atuacao", "Valor", [UFs com Atuação] & ""),
+    ROW("Medida", "Lideranca", "Valor", [UFs na Liderança] & ""),
+    ROW("Medida", "Top 3", "Valor", FORMAT([UFs no Top 3], "0", "en-US")),
+    ROW("Medida", "Melhor UF", "Valor", [UF Maior Participação]),
+    ROW("Medida", "Melhor share %", "Valor", FORMAT([Maior Participação UF (%)], "0.0000000000", "en-US")),
+    ROW("Medida", "PI premio", "Valor", FORMAT(CALCULATE([Prêmios Seguradora Comparável UF], dim_uf[uf] = "PI"), "0.00", "en-US")),
+    ROW("Medida", "PI share AA %", "Valor", FORMAT(CALCULATE([Market Share Comparável UF AA (%)], dim_uf[uf] = "PI"), "0.0000000000", "en-US")),
+    ROW("Medida", "PI delta pp", "Valor", FORMAT(CALCULATE([Variação MS Comparável UF (p.p.)], dim_uf[uf] = "PI"), "0.0000000000;-0.0000000000;0.0000000000", "en-US"))
+  ),
+  TREATAS({"05631"}, Seletor_Entidade[coenti]),
+  TREATAS({"00230"}, Seletor_Grupo[cogrupo]),
+  TREATAS({DATE(2026, 1, 1)}, Filtro_Mes_Inicial[Data]),
+  TREATAS({DATE(2026, 9, 1)}, Filtro_Mes_Final[Data])
+)
+
+// 2 — Cartões Brasilprev e comparação anual do Maranhão
+EVALUATE
+CALCULATETABLE(
+  UNION(
+    ROW("Medida", "Atuacao", "Valor", [UFs com Atuação] & ""),
+    ROW("Medida", "Lideranca", "Valor", [UFs na Liderança] & ""),
+    ROW("Medida", "Top 3", "Valor", FORMAT([UFs no Top 3], "0", "en-US")),
+    ROW("Medida", "Melhor UF", "Valor", [UF Maior Participação]),
+    ROW("Medida", "Melhor share %", "Valor", FORMAT([Maior Participação UF (%)], "0.0000000000", "en-US")),
+    ROW("Medida", "MA premio", "Valor", FORMAT(CALCULATE([Prêmios Seguradora Comparável UF], dim_uf[uf] = "MA"), "0.00", "en-US")),
+    ROW("Medida", "MA share AA %", "Valor", FORMAT(CALCULATE([Market Share Comparável UF AA (%)], dim_uf[uf] = "MA"), "0.0000000000", "en-US")),
+    ROW("Medida", "MA delta pp", "Valor", FORMAT(CALCULATE([Variação MS Comparável UF (p.p.)], dim_uf[uf] = "MA"), "0.0000000000;-0.0000000000;0.0000000000", "en-US"))
+  ),
+  TREATAS({"04707"}, Seletor_Entidade[coenti]),
+  TREATAS({DATE(2025, 10, 1)}, Filtro_Mes_Inicial[Data]),
+  TREATAS({DATE(2026, 9, 1)}, Filtro_Mes_Final[Data])
+)
+
+// 3 — A posição fica BLANK no agrupamento do mapa.
+EVALUATE
+  SUMMARIZECOLUMNS(dim_uf[Estado Mapa], Caixa, Jan26, Set26, Piaui,
+    "Posicao no mapa", [Posição Comparável UF],
+    "Premio", [Prêmios Seguradora Comparável UF],
+    "Share %", [Market Share Comparável UF (%)])
+
+// 4 — A posição é 5 quando o código de UF está em escopo.
+EVALUATE
+  SUMMARIZECOLUMNS(dim_uf[uf], Caixa, Jan26, Set26, Piaui,
+    "Posicao em UF", [Posição Comparável UF])

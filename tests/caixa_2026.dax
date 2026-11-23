@@ -1,0 +1,17 @@
+EVALUATE
+CALCULATETABLE(
+  UNION(
+    ROW("Medida", "Share (fracao)", "Valor", FORMAT([Market Share da Referência], "0.0000000000000", "en-US")),
+    ROW("Medida", "Premios", "Valor", FORMAT([Prêmios Referência], "0.00", "en-US")),
+    ROW("Medida", "Mercado", "Valor", FORMAT([Prêmios Mercado da Carteira], "0.00", "en-US")),
+    ROW("Medida", "Posicao", "Valor", FORMAT([Posição de Mercado Individual], "0", "en-US")),
+    ROW("Medida", "Concorrentes", "Valor", FORMAT([Qtd Seguradoras Concorrentes], "0", "en-US")),
+    ROW("Medida", "Proxima (R$)", "Valor", FORMAT([Distância para Próxima Posição], "0.00", "en-US")),
+    ROW("Medida", "Lideranca (R$)", "Valor", FORMAT([Distância para Liderança], "0.00", "en-US")),
+    ROW("Medida", "Variacao (p.p.)", "Valor", FORMAT([Variação Contribuição MS p.p.], "0.000000000", "en-US"))
+  ),
+  TREATAS({"05631"}, Seletor_Entidade[coenti]),
+  TREATAS({"00230"}, Seletor_Grupo[cogrupo]),
+  TREATAS({DATE(2026,1,1)}, Filtro_Mes_Inicial[Data]),
+  TREATAS({DATE(2026,9,1)}, Filtro_Mes_Final[Data])
+)
