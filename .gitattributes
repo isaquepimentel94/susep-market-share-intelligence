@@ -1,0 +1,3 @@
+*.sh text eol=lf
+*.sha256 text eol=lf
+dist/uf-map.json text eol=lf

@@ -1,86 +1,80 @@
-# SUSEP | Market Share Intelligence
+# Market Share Intelligence Web
 
-**Inteligência competitiva para o mercado segurador brasileiro, desenvolvida em Power BI a partir de dados públicos da SUSEP.**
+Aplicação web para analisar a posição competitiva das seguradoras no mercado brasileiro. O painel reúne participação de mercado, distribuição por UF, simulações de ranking e efeitos de fusões e aquisições. A versão de dados homologada cobre janeiro de 2019 a setembro de 2026.
 
-O projeto transforma dados do mercado de seguros em uma visão de negócio sobre **participação de mercado, posicionamento competitivo, desempenho técnico e presença regional**. A análise parte de uma seguradora de referência e compara sua atuação com a de concorrentes em **carteiras de produtos equivalentes**.
+A aplicação interativa está preparada para execução local e futura hospedagem. Sua entrada é `dist/index.html`, servida pela aplicação Python.
 
-**Atualização dos dados:** setembro de 2026  
-**Ferramenta de visualização:** Microsoft Power BI Desktop  
-**Formato disponível:** `.pbix` (relatório com modelo de dados importado)
+## Páginas
 
-### [📥 Baixar o dashboard — versão mais recente](https://github.com/isaquepimentel94/susep-market-share-intelligence/releases/latest)
+| Página | O que consultar |
+|---|---|
+| Início | Seleção de grupo econômico e seguradoras de referência |
+| Raio-X Competitivo | Indicadores, ranking, evolução mensal e diagnóstico da carteira |
+| Visão por UF | Participação por estado, ranking e ganhos ou perdas em pontos percentuais |
+| Simulações Estratégicas | Cenários de crescimento da referência e dos concorrentes, posição e metas |
+| Fusão e Aquisição | Participação e posição combinadas, concentração e detalhamento por UF e grupo de ramos |
+| Guia de Indicadores | Definições, fórmulas, interpretações e fontes recuperadas do modelo |
 
-> O relatório está disponível para **download e exploração no Power BI Desktop**, gratuitamente. Não há uma versão interativa hospedada no navegador neste momento. O código do ETL e os notebooks de processamento **não fazem parte desta publicação**.
+## Arquitetura
 
-## Problema de negócio
+O servidor Python usa Waitress para servir o frontend HTML/CSS/JavaScript em `dist/` e a API na mesma origem. DuckDB consulta nove Parquets fora da raiz pública. Os módulos analíticos ficam em `core.py`, `analysis_views.py`, `uf_views.py`, `simulation.py` e `ma_views.py`. A API retorna os resultados já calculados, preservando decimais monetários até a formatação. O JavaScript gerencia filtros, interação e apresentação.
 
-Comparar a participação de seguradoras no mercado total pode distorcer a análise quando elas atuam em linhas de produtos diferentes. Uma empresa focada em automóveis, por exemplo, não deve ter sua posição competitiva avaliada com base em receitas de produtos que não comercializa.
+`/healthz` verifica a disponibilidade do serviço. O Blueprint em `render.yaml` descreve uma implantação futura, e o diretório `deploy/` guarda os scripts de build, inicialização e o manifesto SHA-256 do snapshot. [Plano de publicação](./PLANO_PUBLICACAO.md) · [Checklist de deploy](./CHECKLIST_DEPLOY.md)
 
-Este dashboard busca responder a perguntas como:
+## Apresentação estática e Power BI
 
-- Qual é a posição da seguradora em seu **mercado efetivamente comparável**?
-- Quanto a separa da próxima colocação e da liderança?
-- Quais grupos de ramos sustentam sua participação e quais apresentam crescimento ou retração?
-- Como sua **sinistralidade** e sua **margem técnica parcial** se comparam às das concorrentes?
-- Em quais estados a seguradora apresenta maior participação, liderança ou perda de espaço?
+O [`index.html` da raiz](./index.html) preserva a apresentação estática anterior. As [instruções legadas](./INSTRUCOES.md) se referem a essa apresentação no GitHub Pages. A aplicação interativa usa a API Python/DuckDB e tem seu próprio fluxo de hospedagem. [Integração ao repositório existente](./INTEGRACAO_GITHUB.md)
 
-## Visões do dashboard
+A [Release 1.0](https://github.com/isaquepimentel94/susep-market-share-intelligence/releases/tag/1.0) contém o PBIX publicado anteriormente. A cópia de posição estável tem uma revisão de publicação separada.
 
-| Visão | O que permite analisar |
-| --- | --- |
-| **Raio-X Competitivo** | Ranking por prêmios diretos, Market Share, distância competitiva, evolução mensal e diagnóstico por grupo de ramos. Alternância entre participação de mercado, sinistralidade e margem técnica parcial. |
-| **Competitividade por UF** | Distribuição territorial da atuação, participação por estado, posição no ranking, lideranças e evolução regional. |
-| **Guia de Indicadores** | Definições, regras de cálculo, interpretações e fontes utilizadas na leitura do relatório. |
+## Fontes e metodologia
 
-Os indicadores respondem à seleção da seguradora e do período de análise, permitindo observar diferentes cenários competitivos sem alterar o modelo.
+- **Mercado segurador.** Os dados vêm do Sistema de Estatísticas da SUSEP. O modelo separa prêmios nacionais e estaduais e aplica as regras de comparabilidade e ranking de cada página. As comparações usam os ramos da carteira da referência no contexto da medida. [SES/SUSEP](https://www2.susep.gov.br/menuestatistica/ses/principal.aspx) · [Paridade do Raio-X](./PARIDADE_POWER_BI.md) · [Paridade da Visão por UF](./PARIDADE_VISAO_UF.md)
+- **Cartografia.** IBGE, Malha Municipal Digital 2023, `BR_UF_2023`. A geometria pública foi projetada, simplificada e convertida em caminhos SVG. A nota técnica do IBGE estabelece termos de reutilização compatíveis com CC BY 4.0, com atribuição. [Nota técnica do IBGE, p. 8](https://www.ibge.gov.br/biblioteca/visualizacao/livros/liv102152.pdf#page=8) · [Licença de referência](https://creativecommons.org/licenses/by/4.0/deed.pt-br) · [Transformações e validação](./PARIDADE_MAPA_PUBLICO.md)
+- **Cenários.** O simulador recalcula participação e posição com as taxas escolhidas. Em M&A, o HHI descreve a concentração no mercado da carteira comparável. Os resultados dependem de entidade, período e filtros. [Paridade do Simulador](./PARIDADE_SIMULADOR.md) · [Paridade de M&A](./PARIDADE_MA.md)
 
-## Diferencial metodológico: carteira comparável
+Os termos de reutilização da cartografia se aplicam ao mapa do IBGE. A licença geral do software fica a cargo do titular do projeto.
 
-A comparação não usa indiscriminadamente todo o mercado segurador. Ela segue o seguinte critério:
+## Execução local
 
-1. **Definir a seguradora de referência** e o período analisado.
-2. **Identificar os ramos com produção positiva** na carteira dessa seguradora no período de referência.
-3. **Aplicar o mesmo conjunto de ramos aos concorrentes**, considerando apenas os prêmios dos produtos abrangidos pela carteira selecionada.
-4. **Manter o universo de produtos comparável** nas análises regionais e nas comparações entre períodos.
+Use Python 3.14 e uma cópia autorizada dos nove Parquets da versão homologada. O manifesto informa os nomes e hashes. Os Parquets e os arquivos do Power BI são mantidos fora do repositório. [Provisionamento do snapshot](./CHECKLIST_DEPLOY.md#2-provisionar-o-snapshot) · [Manifesto SHA-256](./deploy/parquets-201901-202609.sha256)
 
-**Exemplo:** se a seguradora de referência atua em Automóvel, os prêmios de Vida de uma concorrente que também vende Automóvel não entram no cálculo do mercado comparável.
+**Windows, no PowerShell**
 
-Essa abordagem aproxima o ranking e o Market Share da competição relevante para a seguradora analisada.
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+$env:SUSEP_DATA_DIR = 'CAMINHO_DA_PASTA_CURATED'
+.\.venv\Scripts\python.exe -B tools/snapshot.py verify --source $env:SUSEP_DATA_DIR
+.\.venv\Scripts\python.exe -B server.py
+```
 
-## Indicadores e análises
+**Linux ou macOS, no terminal**
 
-**Participação e posicionamento:** prêmios diretos, Market Share, posição competitiva, distância para a próxima posição e para a liderança, composição e evolução da carteira.
+```sh
+python3.14 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+export SUSEP_DATA_DIR='/caminho/para/curated'
+.venv/bin/python -B tools/snapshot.py verify --source "$SUSEP_DATA_DIR"
+.venv/bin/python -B server.py
+```
 
-**Desempenho técnico:** sinistralidade, margem técnica parcial e diferenças em relação ao mercado de comparação.
+Substitua o caminho de exemplo pela pasta autorizada e abra a aplicação no navegador. O servidor usa `127.0.0.1:8000` por padrão. Para trocar a porta, acrescente `--port 8001`. [Abrir a aplicação local](http://127.0.0.1:8000/)
 
-**Competitividade regional:** participação por UF, posições estaduais, presença territorial, lideranças e ganhos ou perdas de Market Share.
+## Testes
 
-**Documentação:** guia com conceitos e critérios que ajudam a interpretar os resultados sem depender do conhecimento prévio das medidas DAX.
+Com o ambiente virtual ativo e `SUSEP_DATA_DIR` configurado para o snapshot homologado, execute:
 
-## Tecnologias e competências aplicadas
+```text
+python -B tools/check_uf_map.py
+python -B -m unittest tests.test_web_deployment tests.test_snapshot
+```
 
-| Tecnologia | Aplicação no projeto |
-| --- | --- |
-| **Power BI** | Modelo analítico, páginas do relatório, filtros e interações. |
-| **DAX** | Indicadores de participação, rankings, comparações temporais e métricas técnicas. |
-| **Power Query** | Consumo e preparação dos conjuntos de dados utilizados pelo modelo. |
-| **Python / DuckDB / Parquet** | Preparação prévia dos dados para consumo analítico; os arquivos e o código dessa etapa não são publicados nesta versão. |
-| **SUSEP** | Fonte pública dos dados do mercado segurador brasileiro. |
+As suítes de paridade ficam em `tests/` e podem ser executadas com `python -B -m unittest discover -s tests -v`. Node.js é usado apenas no teste opcional do Guia, com `node --test tests/test_guide.mjs`. [Validação do Guia](./PARIDADE_GUIA.md)
 
-## Como explorar o relatório
+## Limitações
 
-1. Acesse **[Releases](https://github.com/isaquepimentel94/susep-market-share-intelligence/releases/latest)**.
-2. Em **Assets**, baixe o arquivo `.pbix` da versão mais recente.
-3. Abra o arquivo no **[Power BI Desktop](https://www.microsoft.com/pt-br/download/details.aspx?id=58494)**.
-4. Escolha a seguradora e o intervalo de análise; navegue pelas páginas e alterne entre as métricas disponíveis.
-
-**Observação:** o arquivo disponibilizado inclui os dados importados necessários para a visualização. Para **atualizar a origem dos dados**, seriam necessários os arquivos e caminhos de processamento utilizados no ambiente de desenvolvimento, que não integram este repositório. Não é necessário executar o ETL para explorar a versão publicada.
-
-## Fonte, escopo e ressalvas
-
-- **Fonte:** [Superintendência de Seguros Privados (SUSEP)](https://www.gov.br/susep/pt-br) — dados públicos do mercado supervisionado.
-- **Recorte desta versão:** informações disponibilizadas até setembro de 2026; resultados dependem dos filtros escolhidos no relatório.
-- **Escopo público:** documentação e arquivo Power BI. Não são disponibilizados notebooks, scripts de extração, arquivos Parquet ou bases intermediárias.
-- **Interpretação:** indicadores nacionais e estaduais podem ter granularidades e conceitos diferentes; não devem ser somados ou tratados como equivalentes sem conciliação.
-
-Este é um **projeto independente de portfólio**, sem vínculo ou endosso institucional da SUSEP. As análises têm finalidade informativa e demonstrativa, não constituindo parecer regulatório, auditoria ou recomendação de investimento.
+- A cobertura temporal e os vínculos entre seguradoras e grupos econômicos dependem do snapshot disponível.
+- Simulações representam os parâmetros escolhidos e devem ser interpretadas no recorte da carteira. O HHI descreve concentração nesse recorte.
+- A malha do IBGE foi generalizada para a visualização nacional. Alguns detalhes de costa e pequenas ilhas foram omitidos, e a interface mantém as 27 UFs. [Paridade do mapa público](./PARIDADE_MAPA_PUBLICO.md)
+- O botão de download só aparece quando há uma URL de Release configurada para o PBIX autorizado. [Plano de publicação](./PLANO_PUBLICACAO.md)

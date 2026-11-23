@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Inteligência competitiva do mercado segurador brasileiro a partir dos dados da SUSEP.">
+  <title>SUSEP | Market Share Intelligence</title>
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./uf.css">
+  <link rel="stylesheet" href="./simulation.css">
+  <link rel="stylesheet" href="./ma.css">
+  <link rel="stylesheet" href="./guide.css">
+  <script src="./app.js" type="module"></script>
+</head>
+<body>
+  <main class="report" id="relatorio">
+    <p id="catalog-status" class="status" role="status">Carregando dados da SUSEP…</p>
+
+    <section id="page-inicio" aria-labelledby="inicio-title" hidden>
+      <header class="report-heading home-heading">
+        <h1 id="inicio-title"><strong>SUSEP</strong> <span class="separator">|</span> <span class="home-title">Market Share Intelligence</span></h1>
+        <p class="as-of" data-coverage></p>
+      </header>
+      <div class="home-layout">
+        <div>
+          <div class="filters-panel">
+            <label class="filter">Grupo
+              <select id="group-select" aria-describedby="entity-help"></select>
+            </label>
+            <div class="filter">
+              <span id="entity-label">Entidade referência</span>
+              <details class="entity-select" id="entity-select">
+                <summary id="entity-summary" aria-labelledby="entity-label entity-summary">Nenhuma selecionada</summary>
+                <div class="entity-menu">
+                  <div class="entity-menu-actions">
+                    <label class="check"><input type="checkbox" id="select-all"> Selecionar todas</label>
+                    <button type="button" id="clear-entities">Limpar</button>
+                  </div>
+                  <div id="entity-options" class="entity-options" role="group" aria-labelledby="entity-label"></div>
+                </div>
+              </details>
+            </div>
+          </div>
+          <p class="home-help" id="entity-help">Selecione um grupo econômico para analisar sua produção consolidada ou escolha as seguradoras para visualizar seu desempenho. Os filtros de período estão nas páginas analíticas.</p>
+        </div>
+        <aside class="page-guide" aria-labelledby="guide-title">
+          <h2 id="guide-title">Páginas analíticas disponíveis</h2>
+          <ul>
+            <li><a href="#raio-x">Raio-X Competitivo</a><p>Participação de mercado em prêmios, por entidade, grupo e carteira.</p></li>
+            <li><a href="#visao-uf">Visão por UF</a><p>Desempenho e participação de mercado por Unidade Federativa.</p></li>
+            <li><a href="#simulacoes">Simulações estratégicas</a><p>Cenários de participação de mercado e impacto de movimentações estratégicas.</p></li>
+            <li><a href="#fusao-aquisicao">Fusão e Aquisição</a><p>Análise de movimentações societárias e seus efeitos no mercado.</p></li>
+            <li><a href="#guia">Guia de Indicadores</a><p>Definições e interpretação dos indicadores do relatório.</p></li>
+          </ul>
+        </aside>
+      </div>
+      <footer class="report-footer">
+        <span>Fonte: SUSEP</span>
+        <a id="pbix-download" rel="noreferrer" hidden>Baixar Power BI (.pbix)</a>
+      </footer>
+    </section>
+
+    <section id="page-raio-x" aria-labelledby="raio-x-title" hidden>
+      <header class="report-heading dashboard-heading">
+        <div>
+          <h1 id="raio-x-title"><strong>SUSEP</strong> <span class="separator">|</span> Raio-X Competitivo</h1>
+          <p class="subtitle">Análise do posicionamento, participação de mercado e desempenho da entidade selecionada frente aos concorrentes de sua carteira.</p>
+        </div>
+        <div class="period-filters" aria-label="Período da análise">
+          <label class="filter">De
+            <select id="start-select" aria-label="Período inicial"></select>
+          </label>
+          <label class="filter">Até
+            <select id="end-select" aria-label="Período final"></select>
+          </label>
+        </div>
+      </header>
+
+      <div class="dashboard-controls">
+        <div class="reference">
+          <span>Referência em análise</span>
+          <a href="#inicio" id="reference-name" title="Alterar a entidade de referência">—</a>
+        </div>
+        <fieldset class="metric-control">
+          <legend class="sr-only">Indicador competitivo</legend>
+          <label><input type="radio" name="metric" value="share"><span>Market Share</span></label>
+          <label><input type="radio" name="metric" value="sinistralidade"><span>Sinistralidade</span></label>
+          <label><input type="radio" name="metric" value="margem"><span>Margem parcial</span></label>
+        </fieldset>
+      </div>
+
+      <p id="analysis-status" class="status analysis-status" role="status" hidden></p>
+      <div id="analysis" aria-busy="true">
+        <dl class="cards" aria-label="Indicadores competitivos">
+          <div class="card"><dt>Posição competitiva</dt><dd id="kpi-position">—</dd><dd class="kpi-context" id="kpi-competitors"></dd></div>
+          <div class="card"><dt id="next-label">Distância para a posição acima</dt><dd id="kpi-next">—</dd></div>
+          <div class="card"><dt>Distância para a liderança</dt><dd id="kpi-leader">—</dd></div>
+          <div class="card"><dt>Participação de mercado</dt><dd id="kpi-share">—</dd></div>
+          <div class="card"><dt>Prêmios diretos</dt><dd id="kpi-premium">—</dd></div>
+          <div class="card"><dt>Variação da participação (p.p.)</dt><dd id="kpi-variation">—</dd></div>
+        </dl>
+
+        <div class="chart-layout">
+          <section class="chart-panel" aria-labelledby="ranking-title">
+            <h2 id="ranking-title">Margem Técnica Parcial por Seguradora</h2>
+            <p id="ranking-subtitle" class="chart-subtitle">Comparação técnica | Maior margem é preferível</p>
+            <div id="ranking" class="ranking"></div>
+          </section>
+          <section class="chart-panel" aria-labelledby="evolution-title">
+            <h2 id="evolution-title">Evolução da Margem Técnica Parcial</h2>
+            <p class="chart-subtitle">Evolução Competitiva (%) por Mês e Ano</p>
+            <div id="evolution" class="evolution">
+              <div class="evolution-plot">
+                <canvas id="evolution-canvas" aria-hidden="true"></canvas>
+                <div id="evolution-points" class="evolution-points" aria-label="Valores da evolução mensal"></div>
+              </div>
+              <div id="evolution-legend" class="evolution-legend" aria-label="Séries por ano"></div>
+            </div>
+          </section>
+        </div>
+
+        <section class="diagnosis" aria-labelledby="diagnosis-title">
+          <h2 id="diagnosis-title">Diagnóstico da Carteira | Rentabilidade Técnica</h2>
+          <p class="chart-subtitle">Análise da participação, crescimento e desempenho técnico por grupo de ramos.</p>
+          <div class="table-scroll" role="region" aria-labelledby="diagnosis-title" tabindex="0">
+            <table id="diagnosis-table">
+              <thead></thead>
+              <tbody></tbody>
+              <tfoot></tfoot>
+            </table>
+          </div>
+        </section>
+      </div>
+      <footer class="report-footer"><span>Fonte: SUSEP</span><span data-coverage></span></footer>
+    </section>
+
+    <section id="page-visao-uf" aria-labelledby="uf-title" class="uf-dashboard" hidden>
+      <header class="report-heading dashboard-heading">
+        <div>
+          <h1 id="uf-title"><strong>SUSEP</strong> <span class="separator">|</span> Visão por UF</h1>
+          <p class="subtitle">Distribuição geográfica dos prêmios, participação de mercado e posicionamento competitivo das seguradoras.</p>
+        </div>
+        <div class="period-filters" aria-label="Período da análise">
+          <label class="filter">De
+            <select id="uf-start-select" aria-label="Período inicial"></select>
+          </label>
+          <label class="filter">Até
+            <select id="uf-end-select" aria-label="Período final"></select>
+          </label>
+        </div>
+      </header>
+      <div class="uf-summary">
+        <div class="reference">
+          <span>Referência em análise</span>
+          <a href="#inicio" id="uf-reference" title="Alterar a entidade de referência">—</a>
+        </div>
+        <dl class="uf-cards" aria-label="Indicadores geográficos">
+          <div class="card"><dt>UFs com Atuação</dt><dd id="uf-coverage">—</dd></div>
+          <div class="card"><dt>UFs na Liderança</dt><dd id="uf-leadership">—</dd></div>
+          <div class="card"><dt>UFs no Top 3</dt><dd id="uf-top3">—</dd></div>
+          <div class="card"><dt>Maior Participação UF (%)</dt><dd id="uf-best-share">—</dd></div>
+        </dl>
+      </div>
+      <p id="uf-status" class="status analysis-status" role="status" hidden></p>
+      <div id="uf-analysis" class="uf-visuals" aria-busy="true">
+        <section class="chart-panel uf-map-panel" aria-labelledby="uf-map-title">
+          <h2 id="uf-map-title">Participação de Mercado por UF</h2>
+          <p class="chart-subtitle">Market Share da seguradora na carteira comparável.</p>
+          <div id="uf-map" class="uf-map"></div>
+          <div id="uf-legend" class="uf-legend"></div>
+          <p class="uf-map-credit">
+            Cartografia: <a href="https://www.ibge.gov.br/geociencias/organizacao-do-territorio/estrutura-territorial/15774-malhas.html?edicao=42093" target="_blank" rel="noopener noreferrer">IBGE, Malha Municipal Digital 2023</a>.
+            Geometria simplificada e projetada para SVG, sob <a href="https://creativecommons.org/licenses/by/4.0/deed.pt-br" target="_blank" rel="noopener noreferrer">termos compatíveis com CC BY 4.0</a>.
+          </p>
+        </section>
+        <section class="chart-panel uf-ranking-panel" aria-labelledby="uf-ranking-title">
+          <h2 id="uf-ranking-title">Ranking Competitivo | Brasil</h2>
+          <p class="chart-subtitle">Prêmios das seguradoras nos ramos da carteira selecionada.</p>
+          <div id="uf-rank-action" class="uf-rank-action" hidden>
+            <span id="uf-rank-candidate"></span>
+            <button type="button" id="uf-analyze-insurer" aria-describedby="uf-rank-candidate">Analisar esta seguradora</button>
+          </div>
+          <div id="uf-ranking" class="uf-bars"></div>
+        </section>
+        <section class="chart-panel uf-variance-panel" aria-labelledby="uf-variance-title">
+          <h2 id="uf-variance-title">Ganhos e Perdas de Market Share por UF</h2>
+          <p class="chart-subtitle">Variação da participação em relação ao mesmo período do ano anterior.</p>
+          <div id="uf-variance" class="uf-bars"></div>
+        </section>
+      </div>
+      <footer class="report-footer"><span>Fonte: SUSEP</span><span data-coverage></span></footer>
+    </section>
+
+    <section id="page-simulacoes" aria-labelledby="simulation-title" hidden>
+      <header class="report-heading dashboard-heading">
+        <div>
+          <h1 id="simulation-title"><strong>SUSEP</strong> <span class="separator">|</span> Simulações Estratégicas</h1>
+          <p class="subtitle">Simule cenários de crescimento dos prêmios e avalie seus impactos na participação de mercado e no posicionamento competitivo.</p>
+        </div>
+        <div class="period-filters" aria-label="Período da análise">
+          <label class="filter">De
+            <select id="simulation-start-select" aria-label="Período inicial"></select>
+          </label>
+          <label class="filter">Até
+            <select id="simulation-end-select" aria-label="Período final"></select>
+          </label>
+        </div>
+      </header>
+      <div class="reference simulation-reference">
+        <span>Referência em análise</span>
+        <a href="#inicio" id="simulation-reference" title="Alterar a entidade de referência">—</a>
+      </div>
+      <div id="simulation"></div>
+      <footer class="report-footer"><span>Fonte: SUSEP</span><span data-coverage></span></footer>
+    </section>
+
+    <section id="page-fusao-aquisicao" aria-labelledby="ma-title" hidden>
+      <header class="report-heading dashboard-heading">
+        <div>
+          <h1 id="ma-title"><strong>SUSEP</strong> <span class="separator">|</span> Fusão e Aquisição</h1>
+          <p class="subtitle">Simule operações de consolidação e avalie seus impactos sobre a posição competitiva da referência e a concentração do mercado.</p>
+        </div>
+        <div class="period-filters" aria-label="Período da análise">
+          <label class="filter">De
+            <select id="ma-start-select" aria-label="Período inicial"></select>
+          </label>
+          <label class="filter">Até
+            <select id="ma-end-select" aria-label="Período final"></select>
+          </label>
+        </div>
+      </header>
+      <div class="ma-controls">
+        <div class="reference">
+          <span>Referência em análise</span>
+          <a href="#inicio" id="ma-reference" title="Alterar a entidade de referência">—</a>
+        </div>
+        <div class="ma-company-controls" aria-label="Seguradoras da operação">
+          <label class="filter">Seguradora A
+            <select id="ma-company-a"></select>
+          </label>
+          <label class="filter">Seguradora B
+            <select id="ma-company-b"></select>
+          </label>
+        </div>
+      </div>
+      <p id="ma-status" class="status analysis-status" role="status" hidden></p>
+      <div id="ma-analysis" aria-busy="true"></div>
+      <footer class="report-footer"><span>Fonte: SUSEP</span><span data-coverage></span></footer>
+    </section>
+
+    <section id="page-guia" aria-labelledby="guide-title" hidden>
+      <header class="report-heading">
+        <h1 id="guide-title"><strong>SUSEP</strong> <span class="separator">|</span> Guia de Indicadores</h1>
+        <p class="subtitle">Definições, fórmulas, fontes e critérios utilizados nas análises de mercado e desempenho técnico.</p>
+      </header>
+      <p id="guide-status" class="status analysis-status" role="status" hidden></p>
+      <div id="guide-content" class="guide-layout" aria-busy="true">
+        <div class="guide-filters">
+          <label class="filter">Categoria
+            <select id="guide-category" disabled></select>
+          </label>
+          <label class="filter">Indicador
+            <select id="guide-indicator" disabled></select>
+          </label>
+        </div>
+        <div class="guide-cards" aria-live="polite">
+          <section class="guide-card" aria-labelledby="guide-definition-title">
+            <h2 id="guide-definition-title">Significado</h2>
+            <p data-guide-field="definition"></p>
+          </section>
+          <section class="guide-card" aria-labelledby="guide-formula-title">
+            <h2 id="guide-formula-title">Fórmula</h2>
+            <p data-guide-field="formula"></p>
+          </section>
+          <section class="guide-card" aria-labelledby="guide-interpretation-title">
+            <h2 id="guide-interpretation-title">Interpretação</h2>
+            <p data-guide-field="interpretation"></p>
+          </section>
+          <section class="guide-card" aria-labelledby="guide-source-title">
+            <h2 id="guide-source-title">Origem dos dados</h2>
+            <p data-guide-field="source"></p>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="report-tabs" aria-label="Páginas do relatório">
+    <div class="tabs-inner">
+      <a href="#inicio" data-page="inicio">Início - Seleção de Entidade</a>
+      <a href="#raio-x" data-page="raio-x">Raio-X Competitivo</a>
+      <a href="#visao-uf" data-page="visao-uf">Visão por UF</a>
+      <a href="#simulacoes" data-page="simulacoes">Simulações estratégicas</a>
+      <a href="#fusao-aquisicao" data-page="fusao-aquisicao">Fusão e Aquisição</a>
+      <a href="#guia" data-page="guia">Guia de Indicadores</a>
+    </div>
+  </nav>
+</body>
+</html>

@@ -1,0 +1,389 @@
+{
+  "fallback": "Selecione um indicador ou conceito.",
+  "defaults": {
+    "category": "Desempenho Técnico",
+    "indicator": "Margem Técnica Parcial"
+  },
+  "entries": [
+    {
+      "order": 1,
+      "category": "Participação e Ranking",
+      "indicator": "Market Share",
+      "definition": "Participação da seguradora nos prêmios do mercado correspondente à sua carteira de referência.",
+      "formula": "Prêmios da seguradora / Prêmios do mercado comparável x 100",
+      "interpretation": "Quanto maior, maior a participação da seguradora no mercado analisado.",
+      "source": "SUSEP - Prêmios",
+      "status": "Implementado"
+    },
+    {
+      "order": 2,
+      "category": "Participação e Ranking",
+      "indicator": "Prêmios Diretos",
+      "definition": "Volume de prêmios registrado para a seguradora no período analisado.",
+      "formula": "Soma dos prêmios conforme a fonte e os filtros aplicados.",
+      "interpretation": "Permite avaliar a dimensão da produção da seguradora.",
+      "source": "SUSEP - Prêmios",
+      "status": "Implementado"
+    },
+    {
+      "order": 3,
+      "category": "Participação e Ranking",
+      "indicator": "Posição Competitiva",
+      "definition": "Colocação da seguradora entre as empresas que disputam os ramos de sua carteira.",
+      "formula": "Ranking decrescente dos prêmios da carteira comparável.",
+      "interpretation": "Posições menores indicam maior volume de prêmios em relação às concorrentes.",
+      "source": "SUSEP - Prêmios",
+      "status": "Implementado"
+    },
+    {
+      "order": 4,
+      "category": "Participação e Ranking",
+      "indicator": "Peso na Carteira",
+      "definition": "Participação de um grupo de ramos na produção total da seguradora.",
+      "formula": "Prêmios do grupo / Prêmios totais da seguradora x 100",
+      "interpretation": "Identifica os segmentos de maior relevância na carteira.",
+      "source": "SUSEP - Prêmios",
+      "status": "Implementado"
+    },
+    {
+      "order": 5,
+      "category": "Participação e Ranking",
+      "indicator": "Crescimento dos Prêmios",
+      "definition": "Variação da produção em relação ao período correspondente do ano anterior.",
+      "formula": "(Prêmios atuais / Prêmios anteriores - 1) x 100",
+      "interpretation": "Valores positivos indicam crescimento nominal dos prêmios.",
+      "source": "SUSEP - Série histórica",
+      "status": "Implementado"
+    },
+    {
+      "order": 6,
+      "category": "Participação e Ranking",
+      "indicator": "Variação do Market Share",
+      "definition": "Mudança da participação de mercado entre dois períodos comparáveis.",
+      "formula": "Market Share atual - Market Share anterior",
+      "interpretation": "Valores positivos indicam ganho de participação; negativos indicam perda.",
+      "source": "SUSEP - Série histórica",
+      "status": "Implementado"
+    },
+    {
+      "order": 7,
+      "category": "Desempenho Técnico",
+      "indicator": "Sinistralidade",
+      "definition": "Relação entre os sinistros ocorridos e os prêmios ganhos.",
+      "formula": "Sinistros ocorridos / Prêmios ganhos x 100",
+      "interpretation": "Valores menores geralmente indicam menor pressão dos sinistros sobre os prêmios.",
+      "source": "fato_premios_nacional",
+      "status": "Implementado"
+    },
+    {
+      "order": 8,
+      "category": "Desempenho Técnico",
+      "indicator": "Margem Técnica Parcial",
+      "definition": "Resultado técnico parcial após sinistros ocorridos e despesas comerciais.",
+      "formula": "(Prêmios ganhos - Sinistros ocorridos - Despesas comerciais) / Prêmios ganhos x 100",
+      "interpretation": "Valores maiores geralmente indicam desempenho técnico parcial mais favorável.",
+      "source": "fato_premios_nacional",
+      "status": "Implementado"
+    },
+    {
+      "order": 9,
+      "category": "Desempenho Técnico",
+      "indicator": "Mercado Comparativo",
+      "definition": "Indicador técnico das demais seguradoras nos mesmos ramos da carteira de referência.",
+      "formula": "Indicador calculado sobre componentes agregados das concorrentes.",
+      "interpretation": "Permite comparar o desempenho da seguradora com o restante do mercado relevante.",
+      "source": "fato_premios_nacional",
+      "status": "Implementado"
+    },
+    {
+      "order": 10,
+      "category": "Desempenho Técnico",
+      "indicator": "Desvio Competitivo",
+      "definition": "Diferença entre o indicador técnico da seguradora e o mercado comparativo.",
+      "formula": "Indicador da seguradora - Indicador das concorrentes",
+      "interpretation": "Na sinistralidade, diferenças negativas são geralmente favoráveis; na margem, positivas.",
+      "source": "Medidas técnicas do modelo",
+      "status": "Implementado"
+    },
+    {
+      "order": 11,
+      "category": "Competitividade Regional",
+      "indicator": "Market Share por UF",
+      "definition": "Participação da seguradora no mercado estadual dos ramos de sua carteira.",
+      "formula": "Prêmios da seguradora na UF / Prêmios do mercado comparável na UF x 100",
+      "interpretation": "Identifica os estados em que a seguradora possui maior participação.",
+      "source": "fato_premios_uf",
+      "status": "Implementado"
+    },
+    {
+      "order": 12,
+      "category": "Competitividade Regional",
+      "indicator": "Posição Comparável UF",
+      "definition": "Classificação estadual da seguradora nos ramos de sua carteira de referência.",
+      "formula": "1 + quantidade de seguradoras com prêmios superiores na mesma UF.",
+      "interpretation": "Identifica o posicionamento competitivo da seguradora em cada estado.",
+      "source": "fato_premios_uf",
+      "status": "Implementado"
+    },
+    {
+      "order": 13,
+      "category": "Competitividade Regional",
+      "indicator": "UFs com Atuação",
+      "definition": "Quantidade de unidades federativas com produção positiva da seguradora no período.",
+      "formula": "Contagem de UFs com prêmios da seguradora maiores que zero.",
+      "interpretation": "Indica a abrangência geográfica da atuação.",
+      "source": "fato_premios_uf",
+      "status": "Implementado"
+    },
+    {
+      "order": 14,
+      "category": "Competitividade Regional",
+      "indicator": "UFs na Liderança",
+      "definition": "Quantidade de UFs em que a seguradora ocupa a primeira posição.",
+      "formula": "Contagem das UFs em que a seguradora lidera a carteira comparável.",
+      "interpretation": "Indica a abrangência territorial da liderança competitiva.",
+      "source": "fato_premios_uf",
+      "status": "Implementado"
+    },
+    {
+      "order": 15,
+      "category": "Competitividade Regional",
+      "indicator": "UFs no Top 3",
+      "definition": "Quantidade de UFs em que a seguradora está entre as três primeiras posições.",
+      "formula": "Contagem de UFs com posição competitiva menor ou igual a 3.",
+      "interpretation": "Identifica a presença da seguradora entre as líderes estaduais.",
+      "source": "fato_premios_uf",
+      "status": "Implementado"
+    },
+    {
+      "order": 16,
+      "category": "Competitividade Regional",
+      "indicator": "Variação do Market Share UF",
+      "definition": "Mudança da participação estadual em relação ao mesmo período do ano anterior.",
+      "formula": "Market Share estadual atual - Market Share estadual anterior",
+      "interpretation": "Valores positivos representam ganhos de participação estadual.",
+      "source": "fato_premios_uf",
+      "status": "Implementado"
+    },
+    {
+      "order": 17,
+      "category": "Atributos e Filtros",
+      "indicator": "Seguradora",
+      "definition": "Empresa de seguros identificada individualmente no cadastro utilizado pelo modelo.",
+      "formula": "Identificação pelo código coenti.",
+      "interpretation": "Define a entidade de referência das análises competitivas.",
+      "source": "dim_seguradora",
+      "status": "Implementado"
+    },
+    {
+      "order": 18,
+      "category": "Atributos e Filtros",
+      "indicator": "Ramo",
+      "definition": "Classificação individual dos produtos de seguros.",
+      "formula": "Identificação pelo código do ramo.",
+      "interpretation": "Determina quais produtos entram na comparação competitiva.",
+      "source": "dim_ramo",
+      "status": "Implementado"
+    },
+    {
+      "order": 19,
+      "category": "Atributos e Filtros",
+      "indicator": "Grupo de Ramos",
+      "definition": "Agrupamento de ramos utilizado para consolidar segmentos de seguros.",
+      "formula": "Agrupamento pelo código gracodigo.",
+      "interpretation": "Facilita a análise da composição e do desempenho da carteira.",
+      "source": "dim_grupo_ramo",
+      "status": "Implementado"
+    },
+    {
+      "order": 20,
+      "category": "Atributos e Filtros",
+      "indicator": "Unidade da Federação",
+      "definition": "Estado ou Distrito Federal associado à produção de seguros.",
+      "formula": "Identificação pela sigla UF.",
+      "interpretation": "Permite avaliar a competitividade regional da seguradora.",
+      "source": "dim_uf",
+      "status": "Implementado"
+    },
+    {
+      "order": 21,
+      "category": "Atributos e Filtros",
+      "indicator": "Competência",
+      "definition": "Mês de referência dos registros financeiros e operacionais.",
+      "formula": "Identificação pelo período mensal de competência.",
+      "interpretation": "Permite analisar intervalos e comparar períodos equivalentes.",
+      "source": "dim_calendario",
+      "status": "Implementado"
+    },
+    {
+      "order": 22,
+      "category": "Metodologia",
+      "indicator": "Carteira Comparável",
+      "definition": "Conjunto de ramos com produção positiva da seguradora de referência no período analisado.",
+      "formula": "Identificar os ramos da seguradora e aplicar o mesmo conjunto às concorrentes.",
+      "interpretation": "Evita contabilizar prêmios de produtos que não pertencem à carteira de referência.",
+      "source": "Medidas de carteira comparável",
+      "status": "Implementado"
+    },
+    {
+      "order": 23,
+      "category": "Metodologia",
+      "indicator": "Critério de Concorrência",
+      "definition": "Regra que define a participação das seguradoras no mercado comparável.",
+      "formula": "Considerar os prêmios das seguradoras nos ramos pertencentes à carteira de referência.",
+      "interpretation": "Uma concorrente pode atuar em outros segmentos, mas seus prêmios fora dos ramos da referência não entram na análise.",
+      "source": "Bases SUSEP e medidas comparáveis",
+      "status": "Implementado"
+    },
+    {
+      "order": 24,
+      "category": "Metodologia",
+      "indicator": "Comparação entre UFs",
+      "definition": "Utilização da mesma carteira de referência na comparação dos mercados estaduais.",
+      "formula": "Aplicar os ramos da referência aos registros de cada UF.",
+      "interpretation": "Permite comparar estados sem alterar o conjunto de produtos analisado.",
+      "source": "fato_premios_uf",
+      "status": "Implementado"
+    },
+    {
+      "order": 25,
+      "category": "Metodologia",
+      "indicator": "Bases Nacional e Estadual",
+      "definition": "Fontes de dados com granularidades e conceitos de prêmios diferentes.",
+      "formula": "Indicadores técnicos utilizam componentes nacionais; análises geográficas utilizam os prêmios reportados por UF.",
+      "interpretation": "Os valores das fontes não devem ser somados ou considerados equivalentes sem conciliação.",
+      "source": "fato_premios_nacional e fato_premios_uf",
+      "status": "Implementado"
+    },
+    {
+      "order": 26,
+      "category": "Metodologia",
+      "indicator": "Comparação Anual",
+      "definition": "Comparação do período escolhido com o intervalo equivalente do ano anterior.",
+      "formula": "Exemplo: janeiro a agosto de 2026 versus janeiro a agosto de 2025.",
+      "interpretation": "Mantém a carteira de referência para identificar mudanças efetivas de participação.",
+      "source": "dim_calendario e medidas históricas",
+      "status": "Implementado"
+    },
+    {
+      "order": 27,
+      "category": "Metodologia",
+      "indicator": "Valores Negativos",
+      "definition": "Registros negativos de prêmios podem decorrer de ajustes e movimentações contábeis.",
+      "formula": "Preservar valores negativos na agregação e exigir produção positiva para classificar atuação.",
+      "interpretation": "Um prêmio negativo no período não significa necessariamente ausência histórica de atuação.",
+      "source": "Bases de prêmios SUSEP",
+      "status": "Implementado"
+    },
+    {
+      "order": 28,
+      "category": "Concentração de Mercado",
+      "indicator": "Índice Herfindahl-Hirschman (HHI)",
+      "definition": "Indicador que mede a concentração de um mercado considerando a participação de todas as seguradoras.",
+      "formula": "HHI = soma dos quadrados dos Market Shares expressos de 0 a 100.",
+      "interpretation": "Quanto maior o HHI, maior a concentração do mercado analisado. O valor máximo é 10.000.",
+      "source": "Prêmios SUSEP e mercado comparável",
+      "status": "Planejado"
+    },
+    {
+      "order": 29,
+      "category": "Concentração de Mercado",
+      "indicator": "CR4 - Concentração das 4 Maiores",
+      "definition": "Participação conjunta das quatro maiores seguradoras do mercado analisado.",
+      "formula": "CR4 = soma dos Market Shares das quatro maiores seguradoras.",
+      "interpretation": "Quanto maior o CR4, maior a parcela do mercado controlada pelas quatro líderes.",
+      "source": "Prêmios SUSEP e mercado comparável",
+      "status": "Planejado"
+    },
+    {
+      "order": 30,
+      "category": "Participação e Ranking",
+      "indicator": "Distância para a Liderança",
+      "definition": "Volume adicional de prêmios necessário para alcançar a seguradora líder da carteira comparável.",
+      "formula": "Prêmios da líder - Prêmios da seguradora de referência.",
+      "interpretation": "Quanto maior a distância positiva, maior o volume necessário para alcançar a liderança.",
+      "source": "Medidas de ranking e prêmios",
+      "status": "Implementado"
+    },
+    {
+      "order": 31,
+      "category": "Participação e Ranking",
+      "indicator": "Distância para a Próxima Posição",
+      "definition": "Diferença de prêmios entre a seguradora selecionada e a concorrente imediatamente à frente.",
+      "formula": "Prêmios da concorrente imediatamente superior - Prêmios da referência.",
+      "interpretation": "Indica o volume de prêmios que separa a seguradora da próxima colocação.",
+      "source": "Medidas de ranking competitivo",
+      "status": "Implementado"
+    },
+    {
+      "order": 32,
+      "category": "Participação e Ranking",
+      "indicator": "Contribuição do Ramo ao Market Share",
+      "definition": "Parcela da participação total de mercado atribuída a determinado ramo ou grupo de ramos.",
+      "formula": "Prêmios da referência no ramo / Prêmios totais do mercado comparável x 100.",
+      "interpretation": "Mostra quais segmentos mais contribuem para a participação total da seguradora.",
+      "source": "Medidas de contribuição ao MS",
+      "status": "Implementado"
+    },
+    {
+      "order": 33,
+      "category": "Participação e Ranking",
+      "indicator": "Variação da Contribuição ao MS",
+      "definition": "Mudança da contribuição de um ramo à participação total entre períodos comparáveis.",
+      "formula": "Contribuição atual do ramo - contribuição no período anterior.",
+      "interpretation": "Identifica os segmentos responsáveis por ganhos ou perdas de participação.",
+      "source": "Medidas históricas de contribuição ao MS",
+      "status": "Implementado"
+    },
+    {
+      "order": 34,
+      "category": "Desempenho Técnico",
+      "indicator": "Prêmios Ganhos",
+      "definition": "Parcela dos prêmios apropriada como receita de seguros no período de cobertura.",
+      "formula": "Agregação dos prêmios ganhos registrados na base nacional.",
+      "interpretation": "Constitui o denominador da sinistralidade e da margem técnica parcial.",
+      "source": "fato_premios_nacional",
+      "status": "Implementado"
+    },
+    {
+      "order": 35,
+      "category": "Desempenho Técnico",
+      "indicator": "Sinistros Ocorridos",
+      "definition": "Valor dos sinistros reconhecidos no período conforme a base utilizada.",
+      "formula": "Agregação dos sinistros ocorridos registrados na fonte nacional.",
+      "interpretation": "Representa o componente de sinistros utilizado na avaliação de desempenho técnico.",
+      "source": "fato_premios_nacional",
+      "status": "Implementado"
+    },
+    {
+      "order": 36,
+      "category": "Desempenho Técnico",
+      "indicator": "Despesas Comerciais",
+      "definition": "Despesas relacionadas à comercialização e distribuição dos seguros, segundo a fonte utilizada.",
+      "formula": "Agregação das despesas comerciais registradas na base nacional.",
+      "interpretation": "Compõem o cálculo da margem técnica parcial e influenciam o resultado técnico.",
+      "source": "fato_premios_nacional",
+      "status": "Implementado"
+    },
+    {
+      "order": 37,
+      "category": "Competitividade Regional",
+      "indicator": "Maior Participação Estadual",
+      "definition": "Maior Market Share da seguradora entre as UFs analisadas.",
+      "formula": "Maior valor de Market Share estadual positivo no período selecionado.",
+      "interpretation": "Identifica o estado em que a seguradora possui maior participação proporcional.",
+      "source": "fato_premios_uf",
+      "status": "Implementado"
+    },
+    {
+      "order": 38,
+      "category": "Competitividade Regional",
+      "indicator": "Variação de Posição Estadual",
+      "definition": "Mudança na colocação da seguradora no ranking estadual entre períodos comparáveis.",
+      "formula": "Posição anterior - posição atual.",
+      "interpretation": "Resultado positivo indica avanço no ranking; negativo indica perda de posições.",
+      "source": "Ranking histórico por UF",
+      "status": "Planejado"
+    }
+  ]
+}

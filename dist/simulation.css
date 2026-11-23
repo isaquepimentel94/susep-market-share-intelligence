@@ -1,0 +1,133 @@
+#simulation { min-width: 0; }
+.sim-sliders {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(12px, 2vw, 26px);
+  width: min(100%, 525px);
+  margin: 8px 0 0 auto;
+}
+.sim-slider {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px 8px;
+  padding: 6px 1px 0;
+}
+.sim-slider label { font-size: .8125rem; font-weight: 600; }
+.sim-slider input[type=range] { grid-column: 1 / -1; width: 100%; margin: 0; accent-color: #479ddf; cursor: pointer; }
+.sim-slider-number { display: flex; gap: 2px; align-items: center; font-size: .8125rem; }
+.sim-slider-number input {
+  width: 4.4em;
+  min-height: 28px;
+  padding: .2rem .3rem;
+  color: inherit;
+  font: inherit;
+  text-align: right;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+.sim-status { margin-block: 10px 0; }
+.sim-cards { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.sim-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.61fr) minmax(0, 1fr);
+  grid-template-areas:
+    "bars movement"
+    "bars goal";
+  grid-template-rows: auto 1fr;
+  gap: 10px;
+}
+.sim-chart { grid-area: bars; display: flex; flex-direction: column; }
+.sim-movement { grid-area: movement; }
+.sim-goal { grid-area: goal; }
+.sim-bars {
+  min-height: 240px;
+  max-height: 440px;
+  overflow: auto;
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  padding-block: 12px 4px;
+  scrollbar-width: thin;
+}
+.sim-bar-list {
+  width: 100%;
+  display: grid;
+  gap: 5px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.sim-company-bar {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(80px, 42%) minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  border: 0;
+  background: transparent;
+  font-size: .75rem;
+  cursor: pointer;
+  padding: 2px 4px;
+  min-height: 29px;
+}
+.sim-company-bar[aria-pressed=true] { background: #eaf4fc; }
+.sim-company-name { overflow: hidden; text-overflow: ellipsis; text-align: right; white-space: nowrap; color: #444; }
+.sim-track { display: grid; align-content: center; margin-right: 50px; height: 24px; }
+.sim-bar-list[data-negative] .sim-track { margin-left: 42px; }
+.sim-track-line { position: relative; height: 10px; }
+.sim-track-line i { position: absolute; top: 1px; bottom: 1px; background: #c9d4df; }
+.sim-track-line.sim-simulated i { background: #479ddf; }
+.sim-bars[data-selection] .sim-company-bar[aria-pressed=false] .sim-track-line { opacity: .45; }
+.sim-bar-amount {
+  position: absolute;
+  transform: translateX(4px);
+  white-space: nowrap;
+  font-size: .7rem;
+  line-height: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.sim-bar-amount[data-negative] { transform: translateX(calc(-100% - 4px)); }
+.sim-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; padding-top: 8px; font-size: .72rem; color: var(--text-secondary); }
+.sim-legend span { display: inline-flex; align-items: center; gap: 4px; }
+.sim-legend i { width: 8px; height: 8px; background: #c9d4df; border-radius: 50%; }
+.sim-legend span:nth-child(2) i { background: #479ddf; }
+.sim-movement .table-scroll { max-height: 186px; }
+.sim-movement tbody td:first-child { width: 100%; }
+.sim-goal-layout { display: grid; grid-template-columns: minmax(100px, 1fr) minmax(136px, 1.35fr); gap: 8px; margin-top: 7px; }
+.sim-goal-options {
+  border: 0;
+  margin: 0;
+  padding: 0 5px 0 0;
+  min-inline-size: 0;
+  max-height: 162px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  font-size: .8125rem;
+}
+.sim-goal-options legend { color: var(--text-secondary); padding: 0; font-size: .76rem; }
+.sim-goal-option { display: flex; align-items: center; gap: 5px; min-height: 25px; cursor: pointer; }
+.sim-goal-option input { accent-color: #479ddf; margin: 0; }
+.sim-goal-cards { display: grid; align-content: center; gap: .65rem; min-width: 0; padding: 2px 0 2px 8px; }
+.sim-goal-cards .card dt { min-height: 0; }
+.sim-goal-cards .card dd { font-size: clamp(1rem, 1.65vw, 1.52rem); }
+
+@media (max-width: 1000px) {
+  .sim-company-bar { grid-template-columns: minmax(75px, 35%) minmax(0, 1fr); }
+  .sim-cards { column-gap: 7px; }
+}
+@media (max-width: 760px) {
+  .sim-layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: "bars" "movement" "goal"; grid-template-rows: auto; }
+  .sim-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .sim-bars { max-height: 330px; }
+  .sim-sliders { margin-left: 0; }
+}
+@media (max-width: 420px) {
+  .sim-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sim-slider { grid-template-columns: minmax(0, 1fr); }
+  .sim-slider label { min-height: 2.6em; }
+  .sim-bar-list[data-negative] .sim-track { margin-left: 31px; }
+  .sim-track { margin-right: 42px; }
+}

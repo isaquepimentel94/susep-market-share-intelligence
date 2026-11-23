@@ -1,0 +1,38 @@
+#guide-title { color: #d9b300; }
+#page-guia .subtitle { max-width: unset; }
+.guide-layout {
+  display: grid;
+  grid-template-columns: minmax(174px, 21%) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(16px, 3vw, 45px);
+  margin-top: 22px;
+}
+.guide-filters,
+.guide-cards { display: grid; gap: clamp(12px, 2vw, 20px); min-width: 0; }
+.guide-filters select { text-overflow: ellipsis; }
+.guide-card {
+  min-width: 0;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 13px;
+  overflow: hidden;
+}
+.guide-card h2 {
+  padding: .55rem .9rem;
+  border-bottom: 1px solid #ededed;
+  font-size: clamp(1rem, 1.55vw, 1.25rem);
+  font-weight: 680;
+}
+.guide-card p {
+  display: flex;
+  align-items: center;
+  min-height: 3.7rem;
+  padding: .75rem .9rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+@media (max-width: 700px) {
+  .guide-layout { grid-template-columns: minmax(0, 1fr); margin-top: 16px; }
+}

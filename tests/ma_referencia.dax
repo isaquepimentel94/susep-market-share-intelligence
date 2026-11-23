@@ -1,0 +1,206 @@
+// Execute o arquivo inteiro no Modo de Consulta DAX. Use a lista Resultado
+// para alternar entre os blocos. A consulta usa as medidas gravadas no PBIX.
+// Para comparar as versões, execute a mesma consulta em cada PBIX.
+DEFINE
+    VAR __Referencia = TREATAS({"05631"}, Seletor_Entidade[coenti])
+    VAR __Allianz = TREATAS({"05177"}, Seletor_MA_A[coenti])
+    VAR __Mapfre = TREATAS({"06238"}, Seletor_MA_B[coenti])
+    VAR __Inicio = TREATAS({DATE(2026, 1, 1)}, Filtro_Mes_Inicial[Data])
+    VAR __Fim = TREATAS({DATE(2026, 9, 1)}, Filtro_Mes_Final[Data])
+    VAR __SP = TREATAS({"SP"}, dim_uf[uf])
+    VAR __Auto = TREATAS({"05 - Automóvel"}, dim_grupo_ramo[grupo_ramo])
+
+// Resultado 1: cartões na seleção salva. Na posição estável, compare
+// 12 antes, 11 após, impacto +1 e posição 2 da resultante.
+EVALUATE
+CALCULATETABLE(
+    ROW(
+        "Atual", [Posição de Mercado Individual],
+        "Após M&A", [Posição Referência Após M&A],
+        "Impacto posição", [Impacto Posição M&A],
+        "Referência R$", [Prêmios Referência],
+        "A R$", [Prêmios M&A A],
+        "B R$", [Prêmios M&A B],
+        "Combinado R$", [Prêmios Combinados M&A],
+        "Mercado R$", [Prêmios Mercado da Carteira],
+        "Share %", [Market Share Combinado M&A %] * 100,
+        "Posição combinada", [Posição Combinada M&A],
+        "HHI antes", [HHI Antes M&A],
+        "HHI após", [HHI Após M&A],
+        "Impacto HHI", [Impacto HHI M&A]
+    ),
+    __Referencia, __Allianz, __Mapfre, __Inicio, __Fim
+)
+
+// Resultado 2: impacto geográfico na seleção salva.
+// A linha Total é calculada no contexto geral da medida.
+EVALUATE
+CALCULATETABLE(
+    SUMMARIZECOLUMNS(
+        ROLLUPADDISSUBTOTAL(dim_uf[uf], "Total"),
+        "Combinado R$", [Prêmios Combinados M&A],
+        "Mercado R$", [Mercado Grupo M&A],
+        "Share %", [MS Combinado Grupo M&A %] * 100,
+        "Impacto HHI", [Impacto HHI Grupo M&A]
+    ),
+    __Referencia, __Allianz, __Mapfre, __Inicio, __Fim
+)
+ORDER BY [Total] ASC, dim_uf[uf] ASC
+
+// Resultado 3: sobreposição por grupo de ramos na seleção salva.
+// A ordem do visual usa o prêmio da seguradora B.
+EVALUATE
+CALCULATETABLE(
+    SUMMARIZECOLUMNS(
+        ROLLUPADDISSUBTOTAL(dim_grupo_ramo[grupo_ramo], "Total"),
+        "Referência R$", [Prêmios Referência],
+        "A R$", [Prêmios M&A A],
+        "B R$", [Prêmios M&A B],
+        "Combinado R$", [Prêmios Combinados M&A],
+        "Pressão %", [Pressão Competitiva M&A %] * 100,
+        "Mercado R$", [Mercado Grupo M&A],
+        "Share %", [MS Combinado Grupo M&A %] * 100,
+        "Impacto HHI", [Impacto HHI Grupo M&A]
+    ),
+    __Referencia, __Allianz, __Mapfre, __Inicio, __Fim
+)
+ORDER BY [Total] ASC, [B R$] DESC, dim_grupo_ramo[grupo_ramo] ASC
+
+// Resultado 4: cartões sob filtros vindos das duas tabelas.
+EVALUATE
+VAR Contextos =
+    DATATABLE(
+        "Ordem", INTEGER,
+        "Cenário", STRING,
+        "UF selecionada", STRING,
+        "Grupo selecionado", STRING,
+        {
+            {1, "UF SP", "SP", BLANK()},
+            {2, "Grupo Automóvel", BLANK(), "05 - Automóvel"},
+            {3, "UF SP e grupo Automóvel", "SP", "05 - Automóvel"}
+        }
+    )
+RETURN
+    GENERATE(
+        Contextos,
+        VAR UfAtual = [UF selecionada]
+        VAR GrupoAtual = [Grupo selecionado]
+        RETURN
+            CALCULATETABLE(
+                ROW(
+                    "Atual", [Posição de Mercado Individual],
+                    "Após M&A", [Posição Referência Após M&A],
+                    "Impacto posição", [Impacto Posição M&A],
+                    "Combinado R$", [Prêmios Combinados M&A],
+                    "Mercado do cartão R$", [Prêmios Mercado da Carteira],
+                    "Mercado da tabela R$", [Mercado Grupo M&A],
+                    "Share cartão %", [Market Share Combinado M&A %] * 100,
+                    "Share tabela %", [MS Combinado Grupo M&A %] * 100,
+                    "Posição combinada", [Posição Combinada M&A],
+                    "HHI antes", [HHI Antes M&A],
+                    "HHI após", [HHI Após M&A],
+                    "Impacto HHI cartão", [Impacto HHI M&A],
+                    "Impacto HHI tabela", [Impacto HHI Grupo M&A]
+                ),
+                __Referencia, __Allianz, __Mapfre, __Inicio, __Fim,
+                FILTER(ALL(dim_uf[uf]), ISBLANK(UfAtual) || dim_uf[uf] = UfAtual),
+                FILTER(
+                    ALL(dim_grupo_ramo[grupo_ramo]),
+                    ISBLANK(GrupoAtual) || dim_grupo_ramo[grupo_ramo] = GrupoAtual
+                )
+            )
+    )
+ORDER BY [Ordem]
+
+// Resultado 8: comparação repetida entre o PBIX anterior e o estável.
+EVALUATE
+CALCULATETABLE(
+    ROW(
+        "Antes", [Posição de Mercado Individual],
+        "Depois", [Posição Referência Após M&A],
+        "Variação", [Impacto Posição M&A],
+        "Resultante", [Posição Combinada M&A],
+        "Prêmios", FORMAT([Prêmios Combinados M&A], "0.00", "en-US"),
+        "Share %", FORMAT([Market Share Combinado M&A %] * 100, "0.00000000", "en-US"),
+        "Δ HHI", FORMAT([Impacto HHI M&A], "0.00000000", "en-US")
+    ),
+    __Referencia, TREATAS({"00230"}, Seletor_Grupo[cogrupo]),
+    __Allianz, __Mapfre, __Inicio, __Fim
+)
+
+// Resultado 5: sobreposição por grupo de ramos com a UF SP selecionada.
+EVALUATE
+CALCULATETABLE(
+    SUMMARIZECOLUMNS(
+        ROLLUPADDISSUBTOTAL(dim_grupo_ramo[grupo_ramo], "Total"),
+        "Referência R$", [Prêmios Referência],
+        "A R$", [Prêmios M&A A],
+        "B R$", [Prêmios M&A B],
+        "Combinado R$", [Prêmios Combinados M&A],
+        "Pressão %", [Pressão Competitiva M&A %] * 100,
+        "Mercado R$", [Mercado Grupo M&A],
+        "Share %", [MS Combinado Grupo M&A %] * 100,
+        "Impacto HHI", [Impacto HHI Grupo M&A]
+    ),
+    __Referencia, __Allianz, __Mapfre, __Inicio, __Fim, __SP
+)
+ORDER BY [Total] ASC, [B R$] DESC, dim_grupo_ramo[grupo_ramo] ASC
+
+// Resultado 6: impacto geográfico com o grupo Automóvel selecionado.
+EVALUATE
+CALCULATETABLE(
+    SUMMARIZECOLUMNS(
+        ROLLUPADDISSUBTOTAL(dim_uf[uf], "Total"),
+        "Combinado R$", [Prêmios Combinados M&A],
+        "Mercado R$", [Mercado Grupo M&A],
+        "Share %", [MS Combinado Grupo M&A %] * 100,
+        "Impacto HHI", [Impacto HHI Grupo M&A]
+    ),
+    __Referencia, __Allianz, __Mapfre, __Inicio, __Fim, __Auto
+)
+ORDER BY [Total] ASC, dim_uf[uf] ASC
+
+// Resultado 7: seleções inválidas, saldos assinados e referência na operação.
+EVALUATE
+VAR Casos =
+    DATATABLE(
+        "Ordem", INTEGER,
+        "Cenário", STRING,
+        "Código A", STRING,
+        "Código B", STRING,
+        {
+            {1, "A e B iguais", "05177", "05177"},
+            {2, "B sem seleção", "05177", BLANK()},
+            {3, "B sem produção na carteira", "05177", "01848"},
+            {4, "B com saldo zero", "05177", "03727"},
+            {5, "B com saldo negativo", "05177", "01864"},
+            {6, "A é a referência", "05631", "06238"}
+        }
+    )
+RETURN
+    GENERATE(
+        Casos,
+        VAR CodigoA = [Código A]
+        VAR CodigoB = [Código B]
+        RETURN
+            CALCULATETABLE(
+                ROW(
+                    "A R$", [Prêmios M&A A],
+                    "B R$", [Prêmios M&A B],
+                    "Combinado R$", [Prêmios Combinados M&A],
+                    "Share %", [Market Share Combinado M&A %] * 100,
+                    "Posição combinada", [Posição Combinada M&A],
+                    "Atual", [Posição de Mercado Individual],
+                    "Após M&A", [Posição Referência Após M&A],
+                    "Impacto posição", [Impacto Posição M&A],
+                    "HHI antes", [HHI Antes M&A],
+                    "HHI após", [HHI Após M&A],
+                    "Impacto HHI cartão", [Impacto HHI M&A],
+                    "Impacto HHI tabela", [Impacto HHI Grupo M&A]
+                ),
+                __Referencia, __Inicio, __Fim,
+                TREATAS({CodigoA}, Seletor_MA_A[coenti]),
+                TREATAS({CodigoB}, Seletor_MA_B[coenti])
+            )
+    )
+ORDER BY [Ordem]

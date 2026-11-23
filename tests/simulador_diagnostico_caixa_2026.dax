@@ -1,0 +1,75 @@
+// Contexto do cartão de posição capturado pelo Analisador de Desempenho.
+// Executar e, se necessário, repetir. A posição sem autocontagem deve ser 12.
+// A medida de diagnóstico é local à consulta e não substitui medida do PBIX.
+DEFINE
+    MEASURE Seletor_Entidade[Auditoria Acima] =
+        VAR Ent = SELECTEDVALUE(Seletor_Entidade[coenti])
+        VAR R =
+            FILTER(
+                ALL(dim_ramo[ramo]),
+                VAR P = CALCULATE([Prêmios Referência], REMOVEFILTERS(dim_uf))
+                RETURN NOT ISBLANK(P) && ABS(P) > 0.01
+            )
+        VAR Ranking =
+            ADDCOLUMNS(
+                ALL(dim_seguradora[coenti]),
+                "@P", CALCULATE([Prêmios Diretos], REMOVEFILTERS(dim_ramo), TREATAS(R, dim_ramo[ramo]))
+            )
+        VAR PRef =
+            CALCULATE(
+                [Prêmios Diretos],
+                REMOVEFILTERS(dim_seguradora),
+                REMOVEFILTERS(dim_ramo),
+                TREATAS({Ent}, dim_seguradora[coenti]),
+                TREATAS(R, dim_ramo[ramo])
+            )
+        VAR Acima = FILTER(Ranking, [@P] > PRef)
+        VAR AcimaSemRef = FILTER(Acima, dim_seguradora[coenti] <> Ent)
+        VAR Diferenca = MAXX(FILTER(Acima, dim_seguradora[coenti] = Ent), [@P] - PRef)
+        RETURN
+            FORMAT(1 + COUNTROWS(Acima), "0")
+                & " / " & FORMAT(1 + COUNTROWS(AcimaSemRef), "0")
+                & " / " & IF(
+                    ISBLANK(Diferenca),
+                    "sem ref",
+                    Ent & " +" & FORMAT(Diferenca * 1000000, "0.000000", "en-US")
+                )
+    VAR F1 = TREATAS({"set/2026"}, 'Filtro_Mes_Final'[Mês/Ano])
+    VAR F2 = TREATAS({"CAIXA SEGURADORA S/A"}, 'Seletor_Entidade'[Seguradora])
+    VAR F3 =
+        FILTER(
+            KEEPFILTERS(VALUES('Crescimento Concorrentes'[Crescimento Concorrentes])),
+            'Crescimento Concorrentes'[Crescimento Concorrentes] = 0
+        )
+    VAR F4 = TREATAS({"Cair 3 posições"}, 'Meta_Movimento'[Objetivo])
+    VAR F5 = TREATAS({"jan/2026"}, 'Filtro_Mes_Inicial'[Mês/Ano])
+    VAR F6 =
+        FILTER(
+            KEEPFILTERS(VALUES('Crescimento Referência'[Crescimento Referência])),
+            'Crescimento Referência'[Crescimento Referência] = 18
+        )
+
+// Reexecução do cartão de posição sem instrumentação da medida.
+EVALUATE
+    SUMMARIZECOLUMNS(
+        F1, F2, F3, F4, F5, F6,
+        "Posição_de_Mercado_Individual", IGNORE('Seletor_Entidade'[Posição de Mercado Individual]),
+        "v_Posição_de_Mercado_Individual_FormatString", IGNORE('Seletor_Entidade'[_Posição de Mercado Individual FormatString])
+    )
+
+// Contexto do cartão de margem capturado sem os filtros de crescimento.
+EVALUATE
+    SUMMARIZECOLUMNS(
+        F1, F2, F4, F5,
+        "Margem_de_Segurança_Meta_R_", IGNORE('Crescimento Concorrentes'[Margem de Segurança Meta R$])
+    )
+
+// A coluna de diagnóstico mostra posição bruta / sem a referência / excesso em µR$.
+// O cálculo instrumentado e a medida original podem usar agregações separadas.
+EVALUATE
+    SUMMARIZECOLUMNS(
+        F1, F2, F3, F4, F5, F6,
+        "Diagnóstico", IGNORE([Auditoria Acima]),
+        "Posição do modelo", IGNORE([Posição de Mercado Individual]),
+        "v_Posição_de_Mercado_Individual_FormatString", IGNORE('Seletor_Entidade'[_Posição de Mercado Individual FormatString])
+    )
